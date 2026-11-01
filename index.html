@@ -22,7 +22,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;b
 @media(max-width:720px){main{grid-template-columns:1fr}.full{grid-column:auto}header h1{font-size:21px}}
 </style></head>
 <body>
-<header><div class="wrap"><h1>OSS WhatsApp Sender</h1><p>Excel/CSV સંપર્ક યાદીમાંથી વ્યક્તિગત WhatsApp મેસેજ તૈયાર કરો</p></div></header>
+<header><div class="wrap"><h1>OSS WhatsApp Sender</h1><p>Excel/CSV સંપર્ક યાદીમાંથી સંમતિ આધારિત WhatsApp મેસેજ તૈયાર કરો</p></div></header>
 <main>
 <section class="card">
 <h2>1. Excel / CSV ફાઇલ ઉમેરો</h2>
@@ -38,9 +38,16 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;b
 <div class="note" style="margin-top:12px">મહત્વપૂર્ણ: WhatsAppની સામાન્ય અધિકૃત સુવિધા અન્ય લોકોના ગ્રુપના સભ્યોના ફોન નંબર આ ટૂલને આપતી નથી. તેથી ગ્રુપમાંથી છુપાઈને સભ્યોના નંબર મેળવવા અથવા આપમેળે મેસેજ મોકલવાની સુવિધા ઉપલબ્ધ નથી. તમે સંમતિ આપેલા સંપર્કોની યાદી Excel/CSVથી ઉમેરો.</div>
 </section>
 <section class="card">
+<h2>સંપર્ક નંબર સીધા પેસ્ટ કરો</h2>
+<p class="hint">માત્ર મેસેજ મેળવવાની સંમતિ આપેલા સંપર્કોના નંબર ઉમેરો. દરેક નંબર નવી લાઇનમાં અથવા કોમા વડે અલગ લખો.</p>
+<textarea id="pasteNumbers" placeholder="9876543210&#10;919876543211"></textarea>
+<div class="row"><button class="btn" id="addPasted">નંબર ઉમેરો</button><button class="btn gold" id="exportCsv">CSV ડાઉનલોડ</button></div>
+<p id="pasteMsg" class="hint">હજુ નંબર ઉમેર્યા નથી.</p>
+</section>
+<section class="card">
 <h2>3. તમારો મેસેજ લખો</h2>
 <p class="hint">નામ માટે <b>{name}</b> લખો. ઉદાહરણ: નમસ્તે {name}, અમારી નવી ઓફર જુઓ.</p>
-<textarea id="message" placeholder="નમસ્તે {name}, ..."></textarea>
+<textarea id="message" placeholder="તમારો એકસરખો મેસેજ અહીં લખો..."></textarea>\n<div class="check"><input id="sameMessage" type="checkbox" checked><label for="sameMessage">બધા સંપર્કોને એકસરખો મેસેજ મોકલવો (નામ આપમેળે નહીં ઉમેરાય)</label></div>
 <div class="row"><button class="btn gold" id="preview">પ્રિવ્યૂ જુઓ</button></div>
 <p id="previewText" class="hint"></p>
 </section>
@@ -57,10 +64,10 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;b
 <div class="scroll"><table><thead><tr><th>નામ</th><th>ફોન</th><th>સ્થિતિ</th><th>ક્રિયા</th></tr></thead><tbody id="tbody"><tr><td colspan="4" class="hint">Excel/CSV અપલોડ કરો.</td></tr></tbody></table></div>
 </section>
 <section class="card full">
-<h2>5. વ્યક્તિગત મેસેજ તૈયાર કરો</h2>
+<h2>5. મેસેજ એક પછી એક મોકલવા તૈયાર કરો</h2>
 <p class="hint">એક સમયે એક સંપર્કની WhatsApp ચેટ ખોલો. મેસેજ ચેટમાં ભરેલો આવશે; મોકલતા પહેલાં તપાસો અને Send દબાવો.</p>
 <div class="row"><button class="btn gold" id="next" disabled>આગળનો સંપર્ક ખોલો</button><button class="btn" id="mark" disabled>મોકલ્યો તરીકે ચિહ્નિત કરો</button><button class="btn" id="reset" style="background:#68758a" disabled>પ્રગતિ રીસેટ</button></div>
-<p id="current" class="hint">સંપર્ક લોડ થયા પછી અહીં દેખાશે.</p>
+<p id="current" class="hint">સંપર્ક લોડ થયા પછી અહીં દેખાશે.</p>\n<p class="hint">નોંધ: એક ક્લિકથી 700 લોકોને WhatsApp પર આપમેળે મોકલવું શક્ય/અધિકૃત નથી. આ બટન એક સમયે એક વ્યક્તિની ચેટ ખોલશે; દરેક મેસેજ WhatsAppમાં જાતે Send કરવો પડશે.</p>
 </section>
 </main>
 <script>
@@ -86,7 +93,30 @@ $('file').addEventListener('change',async e=>{
  sent.clear();index=0;current=null;$('filemsg').textContent=`${contacts.length} અનન્ય રેકોર્ડ લોડ થયા. ${duplicates} ડુપ્લિકેટ નંબર દૂર કર્યા.`;render();
  }catch(err){$('filemsg').textContent='ફાઇલ વાંચી શકાઈ નથી. XLSX અથવા CSV ફાઇલ અજમાવો.'}
 });
-$('connect').onclick=()=>{window.open('https://web.whatsapp.com/','_blank');$('connectStatus').textContent='WhatsApp Web નવી ટૅબમાં ખોલ્યું. લૉગિન તમે જાતે કરો.'};
+
+$('addPasted').onclick=()=>{
+ const raw=$('pasteNumbers').value;
+ const tokens=raw.split(/[\\s,;]+/).map(x=>x.trim()).filter(Boolean);
+ const existing=new Set(contacts.map(c=>c.phone).filter(Boolean));
+ let added=0, duplicates=0, invalid=0;
+ for(const token of tokens){
+   const phone=cleanPhone(token);
+   if(!phone){invalid++;continue}
+   if(existing.has(phone)){duplicates++;continue}
+   existing.add(phone);contacts.push({name:'સંપર્ક '+(contacts.length+1),phone});added++;
+ }
+ sent.clear();current=null;index=0;render();
+ $('pasteMsg').textContent=`${added} નવા નંબર ઉમેર્યા. ${duplicates} ડુપ્લિકેટ અવગણ્યા. ${invalid} અમાન્ય નંબર અવગણ્યા.`;
+};
+$('exportCsv').onclick=()=>{
+ if(!contacts.length){alert('પહેલાં સંપર્કો ઉમેરો.');return}
+ const rows=[['Name','Phone'],...contacts.map(c=>[c.name,c.phone])];
+ const csv='\\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\\r
+');
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='OSS-WhatsApp-Contacts.csv';a.click();URL.revokeObjectURL(a.href);
+};
+\n$('connect').onclick=()=>{window.open('https://web.whatsapp.com/','_blank');$('connectStatus').textContent='WhatsApp Web નવી ટૅબમાં ખોલ્યું. લૉગિન તમે જાતે કરો.'};
 $('sample').onclick=()=>{const ws=XLSX.utils.aoa_to_sheet([['Name','Phone'],['Sample 1','919876543210'],['Sample 2','919876543211']]);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Contacts');XLSX.writeFile(wb,'OSS-WhatsApp-Contacts-Template.xlsx')};
 $('clear').onclick=()=>{contacts=[];sent.clear();current=null;$('file').value='';$('filemsg').textContent='યાદી સાફ કરી.';render()};
 $('preview').onclick=()=>{const c=contacts.find(x=>x.phone)||{name:'મિત્ર'};$('previewText').textContent=$('message').value.replaceAll('{name}',c.name)||'પહેલાં મેસેજ લખો.'};
@@ -94,7 +124,7 @@ $('consent').onchange=render;
 window.openContact=i=>{
  const c=contacts[i];if(!c||!c.phone)return;
  if(!$('consent').checked){alert('આગળ વધતા પહેલાં સંમતિની પુષ્ટિ કરો.');return}
- const msg=$('message').value.replaceAll('{name}',c.name);
+ const rawMsg=$('message').value;const msg=$('sameMessage').checked?rawMsg:rawMsg.replaceAll('{name}',c.name);
  if(!msg.trim()){alert('પહેલાં મેસેજ લખો.');return}
  current=i;index=i;$('current').textContent=`હાલનો સંપર્ક: ${c.name} (${c.phone})`;
  window.open('https://wa.me/'+c.phone+'?text='+encodeURIComponent(msg),'_blank');render();
