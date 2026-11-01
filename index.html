@@ -2,135 +2,131 @@
 <html lang="gu">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10233f">
 <title>OSS WhatsApp Sender</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-:root{--navy:#10233f;--gold:#f2bd45;--bg:#f4f6fa;--ink:#172338;--muted:#69758a;--green:#128c55}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,"Noto Sans Gujarati",sans-serif;color:var(--ink)}
-header{background:linear-gradient(120deg,#10233f,#1d4168);color:#fff;padding:25px 18px}
-.wrap{max-width:1050px;margin:auto;padding:0 16px}header h1{margin:0;font-size:25px}header p{margin:7px 0 0;color:#d8e3f1}
-main{max-width:1050px;margin:22px auto;padding:0 16px;display:grid;gap:16px;grid-template-columns:1fr 1fr}
-.card{background:#fff;border:1px solid #e2e7ef;border-radius:16px;padding:18px;box-shadow:0 5px 20px #14243a0a}
-h2{font-size:18px;margin:0 0 13px}.hint{font-size:13px;color:var(--muted);line-height:1.55}
-input,textarea,button{font:inherit}input[type=file],input[type=text],textarea{width:100%;padding:12px;border:1px solid #ccd5e1;border-radius:10px;background:#fff}
-textarea{min-height:120px;resize:vertical}.btn{border:0;border-radius:10px;padding:11px 15px;background:var(--navy);color:#fff;font-weight:650;cursor:pointer}.btn.gold{background:var(--gold);color:#19253a}.btn:disabled{opacity:.45;cursor:not-allowed}
-.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}.stat{background:#f2f5f9;padding:12px;border-radius:10px;min-width:100px;flex:1}.stat b{display:block;font-size:23px}.stat small{color:var(--muted)}
-.full{grid-column:1/-1}.bar{height:9px;background:#e9edf3;border-radius:20px;overflow:hidden;margin:10px 0}.bar span{display:block;height:100%;background:var(--green);width:0}
-table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;border-bottom:1px solid #edf0f4;padding:9px 7px}th{color:var(--muted);font-weight:600}
-.scroll{overflow:auto;max-height:300px}.check{display:flex;gap:9px;align-items:flex-start;font-size:13px;line-height:1.5;margin-top:12px}
-.note{background:#fff8e8;border:1px solid #f3d99a;padding:12px;border-radius:10px;font-size:13px;line-height:1.55}
-@media(max-width:720px){main{grid-template-columns:1fr}.full{grid-column:auto}header h1{font-size:21px}}
+:root{--navy:#10233f;--gold:#d7a83e;--bg:#f4f6fa;--ink:#172033;--muted:#667085;--line:#e5e9f0;--green:#168653}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}
+header{background:var(--navy);color:#fff;padding:18px max(16px,calc((100% - 1180px)/2));display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-size:21px;font-weight:800;letter-spacing:.2px}.brand span{color:var(--gold)}header small{color:#cbd5e1}
+.wrap{max-width:1180px;margin:22px auto;padding:0 14px}.layout{display:grid;grid-template-columns:220px 1fr;gap:18px}
+nav,.panel{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 2px 10px #15274408}
+nav{padding:10px;height:max-content;position:sticky;top:12px}
+nav button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:12px;border-radius:9px;color:#344054;font-weight:650;cursor:pointer}
+nav button.active,nav button:hover{background:#edf2f8;color:var(--navy)}
+main{min-width:0}.panel{padding:20px;margin-bottom:16px}.hidden{display:none!important}
+h1{font-size:23px;margin:0 0 6px}h2{font-size:18px;margin:0 0 14px}.sub{color:var(--muted);margin:0 0 18px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.stat{background:#f7f9fc;border:1px solid var(--line);padding:15px;border-radius:11px}.stat b{display:block;font-size:25px;color:var(--navy)}
+label{display:block;font-weight:650;font-size:13px;margin:10px 0 6px}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid #cfd6e1;border-radius:9px;font:inherit;background:white;color:var(--ink)}
+textarea{min-height:110px;resize:vertical}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row>*{flex:1}
+button,.btn{border:0;border-radius:9px;padding:10px 14px;background:var(--navy);color:white;font-weight:700;cursor:pointer}
+button.gold{background:var(--gold);color:#172033}button.light{background:#edf2f8;color:var(--navy)}button.danger{background:#b42318}
+button:disabled{opacity:.45;cursor:not-allowed}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px;margin-top:12px}
+table{border-collapse:collapse;width:100%;min-width:620px}th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);font-size:13px}th{background:#f7f9fc}
+.note{background:#fff8e8;border:1px solid #f2dfae;color:#72520a;padding:12px;border-radius:10px;font-size:13px;line-height:1.5}
+.good{color:var(--green);font-weight:700}.muted{color:var(--muted);font-size:13px}.pill{display:inline-block;padding:4px 8px;border-radius:30px;background:#edf2f8;font-size:12px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+@media(max-width:760px){.layout{grid-template-columns:1fr}nav{position:static;display:grid;grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr 1fr}.panel{padding:15px}}
 </style></head>
 <body>
-<header><div class="wrap"><h1>OSS WhatsApp Sender</h1><p>Excel/CSV સંપર્ક યાદીમાંથી સંમતિ આધારિત WhatsApp મેસેજ તૈયાર કરો</p></div></header>
+<header><div><div class="brand">OSS <span>WhatsApp Sender</span></div><small>Private contact & campaign manager</small></div><small id="saveState">આ ડિવાઇસમાં લોકલ સેવ</small></header>
+<div class="wrap"><div class="layout">
+<nav id="nav">
+<button class="active" data-tab="dashboard">▦ Dashboard</button><button data-tab="contacts">♙ Contacts</button>
+<button data-tab="campaign">✉ Message Campaign</button><button data-tab="templates">▤ Templates</button>
+<button data-tab="history">◷ History & Reports</button><button data-tab="backup">⇩ Backup & Restore</button>
+<button data-tab="settings">⚙ Settings</button>
+</nav>
 <main>
-<section class="card">
-<h2>1. Excel / CSV ફાઇલ ઉમેરો</h2>
-<p class="hint">ફાઇલમાં <b>Name</b> અને <b>Phone</b> કૉલમ રાખો. ફોન નંબર country code સાથે હોય તો સારું (ભારત માટે 91).</p>
-<input id="file" type="file" accept=".xlsx,.xls,.csv">
-<div class="row"><button class="btn" id="sample">નમૂના Excel ફાઇલ ડાઉનલોડ</button><button class="btn" id="clear" style="background:#68758a">યાદી સાફ કરો</button></div>
-<p id="filemsg" class="hint">હજુ કોઈ ફાઇલ પસંદ કરી નથી.</p>
+<section id="dashboard" class="tab">
+<div class="panel"><h1>નમસ્તે! OSS Sender</h1><p class="sub">તમારા સંપર્કો, સંમતિ અને મેસેજ કેમ્પેઇન એક જ જગ્યાએ મેનેજ કરો.</p>
+<div class="grid"><div class="stat"><span class="muted">કુલ સંપર્કો</span><b id="sTotal">0</b></div><div class="stat"><span class="muted">મેસેજ માટે મંજૂર</span><b id="sAllowed">0</b></div><div class="stat"><span class="muted">Opt-out / રોકેલા</span><b id="sBlocked">0</b></div></div></div>
+<div class="panel"><h2>ઝડપી શરૂઆત</h2><div class="actions"><button onclick="tab('contacts')">સંપર્ક ઉમેરો</button><button class="gold" onclick="tab('campaign')">નવો મેસેજ કેમ્પેઇન</button><button class="light" onclick="tab('backup')">બેકઅપ લો</button></div></div>
+<div class="note">દરેક Excel/CSV અપલોડ અલગ લિસ્ટ બને છે. કેમ્પેઇન શરૂ કરતી વખતે એક ચોક્કસ લિસ્ટ પસંદ કરશો તો ફક્ત એ જ લિસ્ટના સંપર્કો આવશે.<br><br>મહત્ત્વપૂર્ણ: આ ટૂલ WhatsApp ગ્રુપમાંથી સભ્યોના ખાનગી નંબર કાઢતું નથી. WhatsApp Web અથવા સત્તાવાર API પણ આપમેળે બધા ગ્રુપ સભ્યોની યાદી આપતી નથી. ફક્ત કાયદેસર રીતે મળેલા અને મેસેજ માટે સંમત થયેલા સંપર્કો ઉમેરો.</div>
 </section>
-<section class="card">
-<h2>2. WhatsApp કનેક્શન / ગ્રુપ માહિતી</h2>
-<p class="hint">તમારા પોતાના WhatsApp અથવા WhatsApp Webમાં લૉગિન કરવા માટે અધિકૃત WhatsApp ખોલો. આ વેબસાઇટ તમારા WhatsAppના ગ્રુપ અથવા સભ્યોની યાદી વાંચતી નથી.</p>
-<div class="row"><button class="btn" id="connect">WhatsApp Web ખોલો</button><span id="connectStatus" class="hint">કનેક્શન સ્થિતિ: તપાસવાની બાકી</span></div>
-<div class="note" style="margin-top:12px">મહત્વપૂર્ણ: WhatsAppની સામાન્ય અધિકૃત સુવિધા અન્ય લોકોના ગ્રુપના સભ્યોના ફોન નંબર આ ટૂલને આપતી નથી. તેથી ગ્રુપમાંથી છુપાઈને સભ્યોના નંબર મેળવવા અથવા આપમેળે મેસેજ મોકલવાની સુવિધા ઉપલબ્ધ નથી. તમે સંમતિ આપેલા સંપર્કોની યાદી Excel/CSVથી ઉમેરો.</div>
+<section id="contacts" class="tab hidden">
+<div class="panel"><h1>Contacts</h1><p class="sub">Excel/CSV આયાત કરો અથવા સંપર્કો પેસ્ટ કરો. ડેટા આ બ્રાઉઝરમાં જ રહે છે.</p>
+<label>Excel અથવા CSV ફાઇલ</label><input type="file" id="file" accept=".csv,.xlsx,.xls">\n<label>આ ફાઇલનું અલગ લિસ્ટ નામ</label><input id="importListName" placeholder="ઉદાહરણ: મારા ગ્રાહકો - નવેમ્બર">\n<p class="muted">દરેક અપલોડ કરેલી ફાઇલનું પોતાનું અલગ લિસ્ટ બનશે. પહેલાનું લિસ્ટ બદલાશે નહીં.</p>
+<p class="muted">ફાઇલમાં Name, Phone, Category, Consent જેવા કૉલમ રાખો. XLSX માટે ઇન્ટરનેટ કનેક્શનથી SheetJS લાઇબ્રેરી લોડ થવી જરૂરી છે.</p>
+<label>નંબર પેસ્ટ કરો (દરેક લાઇનમાં એક; નામ,નંબર પણ ચાલશે)</label><textarea id="paste" placeholder="Ravi,9876543210&#10;Meena,919876543210"></textarea>
+<div class="row"><div><label>ડિફોલ્ટ કેટેગરી</label><input id="newCat" placeholder="Customer" value="Customer"></div><div><label>સંમતિની સ્થિતિ</label><select id="newConsent"><option value="yes">સંમતિ છે</option><option value="no">સંમતિ નથી / અજ્ઞાત</option></select></div></div>
+<div class="actions"><button onclick="pasteContacts()">પેસ્ટ કરેલા ઉમેરો</button><button class="light" onclick="downloadSample()">નમૂના CSV</button><button class="light" onclick="exportContacts()">Contacts CSV Export</button></div></div>
+<div class="panel"><div class="row"><h2>અલગ સંપર્ક લિસ્ટ</h2><select id="listSelect" onchange="activeListId=this.value;renderContacts();refreshCampaignLists()"></select></div><div class="row"><input id="newListName" placeholder="નવું લિસ્ટ નામ"><button onclick="createList()">નવું ખાલી લિસ્ટ બનાવો</button></div><div class="row"><input id="search" placeholder="નામ અથવા નંબર શોધો..." oninput="renderContacts()"></div>
+<div class="row"><select id="catFilter" onchange="renderContacts()"><option value="">બધી કેટેગરી</option></select><select id="consentFilter" onchange="renderContacts()"><option value="">બધી સંમતિ સ્થિતિ</option><option value="yes">સંમતિ છે</option><option value="no">સંમતિ નથી / અજ્ઞાત</option><option value="blocked">Opt-out</option></select></div>
+<div class="tablewrap"><table><thead><tr><th>નામ</th><th>ફોન</th><th>કેટેગરી</th><th>સંમતિ</th><th>ક્રિયા</th></tr></thead><tbody id="contactRows"></tbody></table></div></div>
 </section>
-<section class="card">
-<h2>સંપર્ક નંબર સીધા પેસ્ટ કરો</h2>
-<p class="hint">માત્ર મેસેજ મેળવવાની સંમતિ આપેલા સંપર્કોના નંબર ઉમેરો. દરેક નંબર નવી લાઇનમાં અથવા કોમા વડે અલગ લખો.</p>
-<textarea id="pasteNumbers" placeholder="9876543210&#10;919876543211"></textarea>
-<div class="row"><button class="btn" id="addPasted">નંબર ઉમેરો</button><button class="btn gold" id="exportCsv">CSV ડાઉનલોડ</button></div>
-<p id="pasteMsg" class="hint">હજુ નંબર ઉમેર્યા નથી.</p>
-</section>
-<section class="card">
-<h2>3. તમારો મેસેજ લખો</h2>
-<p class="hint">નામ માટે <b>{name}</b> લખો. ઉદાહરણ: નમસ્તે {name}, અમારી નવી ઓફર જુઓ.</p>
-<textarea id="message" placeholder="તમારો એકસરખો મેસેજ અહીં લખો..."></textarea>\n<div class="check"><input id="sameMessage" type="checkbox" checked><label for="sameMessage">બધા સંપર્કોને એકસરખો મેસેજ મોકલવો (નામ આપમેળે નહીં ઉમેરાય)</label></div>
-<div class="row"><button class="btn gold" id="preview">પ્રિવ્યૂ જુઓ</button></div>
-<p id="previewText" class="hint"></p>
-</section>
-<section class="card full">
-<h2>4. સંપર્ક યાદી અને પ્રગતિ</h2>
-<div class="row">
-<div class="stat"><b id="total">0</b><small>કુલ સંપર્કો</small></div>
-<div class="stat"><b id="valid">0</b><small>માન્ય નંબર</small></div>
-<div class="stat"><b id="done">0</b><small>તમે મોકલ્યા તરીકે ચિહ્નિત કર્યા</small></div>
-</div>
-<div class="bar"><span id="progress"></span></div>
-<div class="note">આ ટૂલ દરેક સંપર્ક માટે WhatsAppની અલગ ચેટ ખોલે છે. મેસેજ મોકલવાનું અંતિમ બટન WhatsAppમાં તમારે જ દબાવવાનું છે. માત્ર તમારી પાસે કાયદેસર રીતે પ્રાપ્ત થયેલા અને મેસેજ મેળવવાની સંમતિ આપેલા સંપર્કોનો ઉપયોગ કરો. અજાણ્યા ગ્રુપ સભ્યોના નંબર કાઢવા અથવા અનિચ્છિત બલ્ક મેસેજ મોકલવા માટે આ ટૂલ નથી.</div>
-<div class="check"><input id="consent" type="checkbox"><label for="consent">હું ખાતરી આપું છું કે આ યાદીના સંપર્કોએ મારી પાસેથી WhatsApp મેસેજ મેળવવા સંમતિ આપી છે.</label></div>
-<div class="scroll"><table><thead><tr><th>નામ</th><th>ફોન</th><th>સ્થિતિ</th><th>ક્રિયા</th></tr></thead><tbody id="tbody"><tr><td colspan="4" class="hint">Excel/CSV અપલોડ કરો.</td></tr></tbody></table></div>
-</section>
-<section class="card full">
-<h2>5. મેસેજ એક પછી એક મોકલવા તૈયાર કરો</h2>
-<p class="hint">એક સમયે એક સંપર્કની WhatsApp ચેટ ખોલો. મેસેજ ચેટમાં ભરેલો આવશે; મોકલતા પહેલાં તપાસો અને Send દબાવો.</p>
-<div class="row"><button class="btn gold" id="next" disabled>આગળનો સંપર્ક ખોલો</button><button class="btn" id="mark" disabled>મોકલ્યો તરીકે ચિહ્નિત કરો</button><button class="btn" id="reset" style="background:#68758a" disabled>પ્રગતિ રીસેટ</button></div>
-<p id="current" class="hint">સંપર્ક લોડ થયા પછી અહીં દેખાશે.</p>\n<p class="hint">નોંધ: એક ક્લિકથી 700 લોકોને WhatsApp પર આપમેળે મોકલવું શક્ય/અધિકૃત નથી. આ બટન એક સમયે એક વ્યક્તિની ચેટ ખોલશે; દરેક મેસેજ WhatsAppમાં જાતે Send કરવો પડશે.</p>
-</section>
-</main>
+<section id="campaign" class="tab hidden">
+<div class="panel"><h1>Message Campaign</h1><p class="sub">એકસરખો અથવા નામ સાથે વ્યક્તિગત મેસેજ તૈયાર કરો. દરેક ચેટ તમે જાતે ખોલશો અને WhatsAppમાં Send દબાવશો.</p>
+<label>કયું લિસ્ટ મોકલવું છે?</label><select id="campaignList" onchange="refreshCampaignLists()"></select><label>મેસેજ પ્રકાર</label><select id="mode"><option value="same">બધાને એકસરખો મેસેજ</option><option value="personal">નામ સાથે વ્યક્તિગત મેસેજ ({name})</option></select>
+<label>મેસેજ લખો</label><textarea id="message" placeholder="નમસ્તે {name}, ..."></textarea>
+<div class="row"><div><label>કેટેગરી</label><select id="campaignCat"><option value="">બધી કેટેગરી</option></select></div><div><label>માત્ર સંમતિ ધરાવતા</label><select id="onlyConsent"><option value="yes">હા (ભલામણ)</option><option value="all">ના — ફક્ત યાદી/Preview</option></select></div></div>
+<div class="actions"><button onclick="startCampaign()">કેમ્પેઇન તૈયાર કરો</button><button class="light" onclick="previewCampaign()">Preview</button></div>
+<div id="campaignInfo" class="note hidden" style="margin-top:14px"></div>
+<div id="sendArea" class="hidden"><h2 style="margin-top:18px">આગળનો સંપર્ક</h2><p id="currentContact"></p><div class="note" id="currentMessage"></div><div class="actions"><button class="gold" onclick="openNext()">WhatsApp ચેટ ખોલો</button><button class="light" onclick="markDone()">મોકલ્યું — આગળ વધો</button><button class="light" onclick="skipNext()">Skip</button></div><p class="muted">WhatsApp ચેટમાં મેસેજ તપાસીને જાતે Send દબાવો. પછી અહીં “મોકલ્યું” દબાવો. આ ટૂલ મોકલાવાની પુષ્ટિ WhatsApp પાસેથી મેળવી શકતું નથી.</p></div>
+</div></section>
+<section id="templates" class="tab hidden"><div class="panel"><h1>Message Templates</h1><p class="sub">વારંવાર વપરાતા મેસેજ સાચવો.</p><label>ટેમ્પલેટનું નામ</label><input id="tplName" placeholder="નવું ઓફર મેસેજ"><label>મેસેજ</label><textarea id="tplText"></textarea><button onclick="saveTemplate()">ટેમ્પલેટ સાચવો</button><div id="tplList" style="margin-top:14px"></div></div></section>
+<section id="history" class="tab hidden"><div class="panel"><h1>History & Reports</h1><div class="grid"><div class="stat"><span class="muted">ચેટ ખોલી</span><b id="hOpened">0</b></div><div class="stat"><span class="muted">મોકલ્યું તરીકે નોંધ્યું</span><b id="hDone">0</b></div><div class="stat"><span class="muted">Skip</span><b id="hSkip">0</b></div></div><div class="tablewrap"><table><thead><tr><th>તારીખ</th><th>નંબર</th><th>સ્થિતિ</th><th>કેમ્પેઇન</th></tr></thead><tbody id="historyRows"></tbody></table></div><p class="muted">“મોકલ્યું તરીકે નોંધ્યું” એ તમારી જાતે કરેલી નોંધ છે, WhatsApp delivery receipt નથી.</p></div></section>
+<section id="backup" class="tab hidden"><div class="panel"><h1>Backup & Restore</h1><p class="sub">સંપર્કો, ટેમ્પલેટ અને રેકોર્ડનો JSON બેકઅપ લો.</p><div class="actions"><button onclick="backup()">પૂર્ણ બેકઅપ ડાઉનલોડ</button><button class="light" onclick="document.getElementById('restore').click()">બેકઅપ Restore</button><input type="file" id="restore" accept=".json" class="hidden"></div><div class="note" style="margin-top:14px">બ્રાઉઝરનો ડેટા સાફ કરશો અથવા બીજું કમ્પ્યુટર વાપરશો તો ડેટા ગુમાઈ શકે છે. નિયમિત બેકઅપ રાખો.</div></div></section>
+<section id="settings" class="tab hidden"><div class="panel"><h1>Settings & Privacy</h1><p>આવૃત્તિ: OSS Sender 2.0</p><p class="muted">સંપર્કો અને રેકોર્ડ તમારા બ્રાઉઝરના Local Storageમાં સાચવાય છે. આ વેબસાઇટનો માલિક કે Vercel આપમેળે તમારી સંપર્ક યાદી જોઈ શકતા નથી; જોકે આ શેર કરેલા કમ્પ્યુટર પર અન્ય સ્થાનિક વપરાશકર્તા બ્રાઉઝર ડેટા જોઈ શકે છે.</p><button class="danger" onclick="clearData()">બધો લોકલ ડેટા કાઢી નાખો</button></div></section>
+</main></div></div>
 <script>
-let contacts=[], index=0, sent=new Set(), current=null;
-const $=id=>document.getElementById(id);
-function cleanPhone(v){let s=String(v??'').replace(/\\D/g,'');if(s.length===10)s='91'+s;return s.length>=11&&s.length<=15?s:''}
-function render(){
- $('total').textContent=contacts.length;
- $('valid').textContent=contacts.filter(c=>c.phone).length;
- $('done').textContent=sent.size;
- $('progress').style.width=(contacts.length?sent.size/contacts.length*100:0)+'%';
- $('tbody').innerHTML=contacts.map((c,i)=>`<tr><td>${esc(c.name)}</td><td>${esc(c.phone||'غير صحيح')}</td><td>${sent.has(i)?'مڪمل':'બાકી'}</td><td><button class="btn" style="padding:6px 9px;font-size:12px" onclick="openContact(${i})" ${!c.phone?'disabled':''}>ચેટ ખોલો</button></td></tr>`).join('')||'<tr><td colspan="4">Excel/CSV અપલોડ કરો.</td></tr>';
- $('next').disabled=!contacts.some(c=>c.phone)||!$('consent').checked;
- $('mark').disabled=!current||!$('consent').checked;
- $('reset').disabled=!contacts.length;
-}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-$('file').addEventListener('change',async e=>{
- const f=e.target.files[0];if(!f)return;
- try{const buf=await f.arrayBuffer();const wb=XLSX.read(buf,{type:'array'});const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
- const imported=rows.map(r=>{let keys=Object.keys(r),name=r.Name??r.name??r.NAME??r['નામ']??'',phone=r.Phone??r.phone??r.Mobile??r.mobile??r['Mobile Number']??r['મોબાઇલ નંબર']??'';if(!phone&&keys.length>=2){name=name||r[keys[0]];phone=r[keys[1]]}return{name:String(name||'મિત્ર'),phone:cleanPhone(phone)}}).filter(c=>c.phone||c.name);
- const seen=new Set();let duplicates=0;contacts=imported.filter(c=>{if(!c.phone)return true;if(seen.has(c.phone)){duplicates++;return false}seen.add(c.phone);return true});
- sent.clear();index=0;current=null;$('filemsg').textContent=`${contacts.length} અનન્ય રેકોર્ડ લોડ થયા. ${duplicates} ડુપ્લિકેટ નંબર દૂર કર્યા.`;render();
- }catch(err){$('filemsg').textContent='ફાઇલ વાંચી શકાઈ નથી. XLSX અથવા CSV ફાઇલ અજમાવો.'}
+const KEY='oss_sender_v2';
+let db={contacts:[],lists:[],templates:[],history:[],campaign:[]}; let activeListId='';
+function load(){try{db={...db,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){} if(!Array.isArray(db.lists))db.lists=[]; if(!db.lists.length && db.contacts.length){let id='legacy-'+Date.now();db.lists.push({id,name:'જૂની સંપર્ક યાદી',created:new Date().toLocaleString()});db.contacts.forEach(c=>c.listId=id);} if(!activeListId&&db.lists.length)activeListId=db.lists[0].id;}
+function save(){localStorage.setItem(KEY,JSON.stringify(db));document.getElementById('saveState').textContent='✓ આ ડિવાઇસમાં સેવ થયું';renderStats()}
+function cleanPhone(v){let s=String(v||'').replace(/[^\d]/g,'');if(s.length===10)s='91'+s;return s}
+function validPhone(p){return /^91[6-9]\d{9}$/.test(p)}
+function addContact(name,phone,category,consent,listId=activeListId){let p=cleanPhone(phone);if(!validPhone(p))return false;if(db.contacts.some(c=>c.listId===listId&&c.phone===p))return false;db.contacts.push({id:Date.now()+Math.random(),listId,name:(name||'').trim()||'નામ નથી',phone:p,category:(category||'Customer').trim(),consent:consent||'no',blocked:false});return true}
+function tab(id){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('hidden',x.id!==id));document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>tab(b.dataset.tab));
+document.getElementById('file').addEventListener('change',async e=>{
+ let f=e.target.files[0];if(!f)return;let rows=[];
+ try{
+  if(f.name.toLowerCase().endsWith('.csv')){let t=await f.text();rows=parseCSV(t)}
+  else{if(!window.XLSX)throw Error('Excel reader લોડ થયું નથી. Excel માટે ઇન્ટરનેટ ચાલુ રાખો અથવા CSV વાપરો.');let w=XLSX.read(await f.arrayBuffer(),{type:'array'});rows=XLSX.utils.sheet_to_json(w.Sheets[w.SheetNames[0]],{defval:''})}
+  let listName=document.getElementById('importListName').value.trim()||f.name.replace(/\.[^.]+$/,'');
+  let list={id:'list-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),name:listName,created:new Date().toLocaleString(),source:f.name};
+  db.lists.push(list);activeListId=list.id;let n=0;
+  rows.forEach(r=>{let obj=Object.fromEntries(Object.entries(r).map(([k,v])=>[String(k).toLowerCase().trim(),v]));let name=obj.name||obj.નામ||obj.contact||'';let phone=obj.phone||obj.mobile||obj.number||obj.નંબર||obj.telephone||'';let cat=obj.category||obj.group||'Imported';let con=String(obj.consent||obj.optin||'').toLowerCase();let consent=(con==='yes'||con==='true'||con==='હા')?'yes':'no';if(addContact(name,phone,cat,consent,list.id))n++});
+  save();renderContacts();refreshCampaignLists();alert(`નવું અલગ લિસ્ટ “${listName}” બનાવ્યું. ${n} સંપર્કો ઉમેરાયા. અન્ય લિસ્ટ અસ્પર્શિત છે. અજ્ઞાત સંમતિને સંમતિ નથી/અજ્ઞાત રાખી છે.`);
+ }catch(err){alert(err.message)}e.target.value='';
 });
+function parseCSV(t){let lines=t.replace(/^\uFEFF/,'').split(/\r?\n/).filter(x=>x.trim());if(!lines.length)return[];let parse=l=>{let a=[],v='',q=false;for(let i=0;i<l.length;i++){let c=l[i];if(c==='"'&&l[i+1]==='"'&&q){v+='"';i++}else if(c==='"')q=!q;else if(c===','&&!q){a.push(v);v=''}else v+=c}a.push(v);return a};let h=parse(lines.shift()).map(x=>x.trim().toLowerCase());return lines.map(l=>Object.fromEntries(parse(l).map((v,i)=>[h[i]||'col'+i,v])))}
+function ensureList(){if(!activeListId||!db.lists.some(l=>l.id===activeListId)){let l={id:'list-'+Date.now(),name:'મેન્યુઅલ સંપર્કો',created:new Date().toLocaleString()};db.lists.push(l);activeListId=l.id;}return activeListId;}
+function createList(){let name=document.getElementById('newListName').value.trim();if(!name)return alert('લિસ્ટનું નામ લખો.');let l={id:'list-'+Date.now()+'-'+Math.random().toString(36).slice(2,5),name,created:new Date().toLocaleString()};db.lists.push(l);activeListId=l.id;document.getElementById('newListName').value='';save();refreshCampaignLists();renderContacts();}
+function pasteContacts(){ensureList();let n=0;document.getElementById('paste').value.split(/\\n/).forEach(l=>{let a=l.split(/[ ,\\t;]/);if(a.length===1)a=['',a[0]];if(addContact(a[0],a[1],document.getElementById('newCat').value,document.getElementById('newConsent').value,activeListId))n++});save();refreshCampaignLists();renderContacts();alert(n+' સંપર્કો પસંદ કરેલા લિસ્ટમાં ઉમેરાયા.')}
+function refreshCampaignLists(){
+ const fill=(id,includeAll)=>{let s=document.getElementById(id);if(!s)return;let old=s.value;s.innerHTML=(includeAll?'<option value="">બધા લિસ્ટ</option>':'')+db.lists.map(l=>`<option value="${l.id}">${esc(l.name)} (${db.contacts.filter(c=>c.listId===l.id).length})</option>`).join('');if(id==='listSelect'){s.value=activeListId||db.lists[0]?.id||'';activeListId=s.value;}else{s.value=old&&db.lists.some(l=>l.id===old)?old:(activeListId||db.lists[0]?.id||'');}};
+ fill('listSelect',false);fill('campaignList',false);
+}
 
-$('addPasted').onclick=()=>{
- const raw=$('pasteNumbers').value;
- const tokens=raw.split(/[\\s,;]+/).map(x=>x.trim()).filter(Boolean);
- const existing=new Set(contacts.map(c=>c.phone).filter(Boolean));
- let added=0, duplicates=0, invalid=0;
- for(const token of tokens){
-   const phone=cleanPhone(token);
-   if(!phone){invalid++;continue}
-   if(existing.has(phone)){duplicates++;continue}
-   existing.add(phone);contacts.push({name:'સંપર્ક '+(contacts.length+1),phone});added++;
- }
- sent.clear();current=null;index=0;render();
- $('pasteMsg').textContent=`${added} નવા નંબર ઉમેર્યા. ${duplicates} ડુપ્લિકેટ અવગણ્યા. ${invalid} અમાન્ય નંબર અવગણ્યા.`;
-};
-$('exportCsv').onclick=()=>{
- if(!contacts.length){alert('પહેલાં સંપર્કો ઉમેરો.');return}
- const rows=[['Name','Phone'],...contacts.map(c=>[c.name,c.phone])];
- const csv='\\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\\r
-');
- const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
- const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='OSS-WhatsApp-Contacts.csv';a.click();URL.revokeObjectURL(a.href);
-};
-\n$('connect').onclick=()=>{window.open('https://web.whatsapp.com/','_blank');$('connectStatus').textContent='WhatsApp Web નવી ટૅબમાં ખોલ્યું. લૉગિન તમે જાતે કરો.'};
-$('sample').onclick=()=>{const ws=XLSX.utils.aoa_to_sheet([['Name','Phone'],['Sample 1','919876543210'],['Sample 2','919876543211']]);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Contacts');XLSX.writeFile(wb,'OSS-WhatsApp-Contacts-Template.xlsx')};
-$('clear').onclick=()=>{contacts=[];sent.clear();current=null;$('file').value='';$('filemsg').textContent='યાદી સાફ કરી.';render()};
-$('preview').onclick=()=>{const c=contacts.find(x=>x.phone)||{name:'મિત્ર'};$('previewText').textContent=$('message').value.replaceAll('{name}',c.name)||'પહેલાં મેસેજ લખો.'};
-$('consent').onchange=render;
-window.openContact=i=>{
- const c=contacts[i];if(!c||!c.phone)return;
- if(!$('consent').checked){alert('આગળ વધતા પહેલાં સંમતિની પુષ્ટિ કરો.');return}
- const rawMsg=$('message').value;const msg=$('sameMessage').checked?rawMsg:rawMsg.replaceAll('{name}',c.name);
- if(!msg.trim()){alert('પહેલાં મેસેજ લખો.');return}
- current=i;index=i;$('current').textContent=`હાલનો સંપર્ક: ${c.name} (${c.phone})`;
- window.open('https://wa.me/'+c.phone+'?text='+encodeURIComponent(msg),'_blank');render();
-};
-$('next').onclick=()=>{let i=contacts.findIndex((c,j)=>j>=index+1&&c.phone&&!sent.has(j));if(i<0)i=contacts.findIndex((c,j)=>c.phone&&!sent.has(j));if(i>=0)openContact(i);else $('current').textContent='બધા માન્ય સંપર્કો તપાસી લીધા છે.'};
-$('mark').onclick=()=>{if(current!==null){sent.add(current);$('current').textContent='મોકલ્યો તરીકે ચિહ્નિત કર્યો. હવે આગળનો સંપર્ક ખોલો.';current=null;render()}};
-$('reset').onclick=()=>{sent.clear();current=null;index=0;render()};
-render();
+function renderContacts(){let q=(document.getElementById('search')?.value||'').toLowerCase(),cat=document.getElementById('catFilter')?.value||'',cf=document.getElementById('consentFilter')?.value||'';let list=db.contacts.filter(c=>(!activeListId||c.listId===activeListId)&&(!q||(c.name+c.phone).toLowerCase().includes(q))&&(!cat||c.category===cat)&&(!cf||(cf==='blocked'?c.blocked:(cf==='yes'?c.consent==='yes'&&!c.blocked:c.consent!=='yes'&&!c.blocked))));document.getElementById('contactRows').innerHTML=list.map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.phone)}</td><td>${esc(c.category)}</td><td>${c.blocked?'Opt-out':c.consent==='yes'?'સંમતિ છે':'અજ્ઞાત/નથી'}</td><td><button class="light" onclick="toggleBlock('${c.id}')">${c.blocked?'Unblock':'Opt-out'}</button> <button class="light" onclick="delContact('${c.id}')">કાઢો</button></td></tr>`).join('')||'<tr><td colspan="5">સંપર્ક મળ્યા નથી.</td></tr>';refreshCategories()}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function toggleBlock(id){let c=db.contacts.find(x=>String(x.id)===id);if(c)c.blocked=!c.blocked;save();renderContacts()}
+function delContact(id){db.contacts=db.contacts.filter(x=>String(x.id)!==id);save();renderContacts()}
+function refreshCategories(){let cats=[...new Set(db.contacts.map(c=>c.category).filter(Boolean))];['catFilter','campaignCat'].forEach(id=>{let el=document.getElementById(id),v=el.value;el.innerHTML='<option value="">બધી કેટેગરી</option>'+cats.map(c=>`<option>${esc(c)}</option>`).join('');el.value=v})}
+function renderStats(){let a=db.contacts.filter(c=>c.consent==='yes'&&!c.blocked).length;document.getElementById('sTotal').textContent=db.contacts.length;document.getElementById('sAllowed').textContent=a;document.getElementById('sBlocked').textContent=db.contacts.filter(c=>c.blocked).length;document.getElementById('hOpened').textContent=db.history.filter(x=>x.status==='opened').length;document.getElementById('hDone').textContent=db.history.filter(x=>x.status==='user_marked_sent').length;document.getElementById('hSkip').textContent=db.history.filter(x=>x.status==='skipped').length;document.getElementById('historyRows').innerHTML=db.history.slice().reverse().map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.phone)}</td><td>${esc(x.status)}</td><td>${esc(x.campaign)}</td></tr>`).join('')}
+function exportContacts(){let selected=db.contacts.filter(c=>!activeListId||c.listId===activeListId);let rows=[['Name','Phone','Category','Consent','OptOut'],...selected.map(c=>[c.name,c.phone,c.category,c.consent,c.blocked?'yes':'no'])];download('oss-'+((db.lists.find(l=>l.id===activeListId)||{}).name||'contacts').replace(/[^a-z0-9-_]/gi,'_')+'.csv','\uFEFF'+rows.map(r=>r.map(csvq).join(',')).join('\n'))}
+function csvq(v){return '"'+String(v??'').replace(/"/g,'""')+'"'}
+function download(name,data,type='text/plain'){let a=document.createElement('a'),u=URL.createObjectURL(new Blob([data],{type}));a.href=u;a.download=name;a.click();URL.revokeObjectURL(u)}
+function downloadSample(){download('oss-contact-sample.csv','Name,Phone,Category,Consent\nRavi,9876543210,Customer,yes\nMeena,9123456789,Supplier,no','text/csv')}
+function eligible(){let cat=document.getElementById('campaignCat').value,mode=document.getElementById('onlyConsent').value,listId=document.getElementById('campaignList').value;return db.contacts.filter(c=>(!listId||c.listId===listId)&&(!cat||c.category===cat)&&!c.blocked&&(mode==='all'||c.consent==='yes'))}
+function previewCampaign(){let m=document.getElementById('message').value;let c=eligible()[0];alert(c?('Preview — '+c.name+'\n\n'+m.replaceAll('{name}',c.name)): 'પસંદગીમાં કોઈ સંપર્ક નથી.')}
+function startCampaign(){let m=document.getElementById('message').value.trim();if(!m)return alert('મેસેજ લખો.');db.campaign=eligible().map(c=>c.id);db.campaignMessage=m;db.campaignIndex=0;db.campaignName='Campaign '+new Date().toLocaleString();save();document.getElementById('campaignInfo').classList.remove('hidden');document.getElementById('campaignInfo').textContent=db.campaign.length+' સંમતિ ધરાવતા/પસંદ કરેલા સંપર્કો તૈયાર. Opt-out સંપર્કો હંમેશા બહાર રાખ્યા છે.';document.getElementById('sendArea').classList.remove('hidden');showCurrent()}
+function showCurrent(){let c=db.contacts.find(x=>x.id===db.campaign[db.campaignIndex]);if(!c){document.getElementById('currentContact').textContent='કેમ્પેઇન પૂર્ણ અથવા કોઈ સંપર્ક બાકી નથી.';document.getElementById('currentMessage').textContent='';return}document.getElementById('currentContact').textContent=(db.campaignIndex+1)+' / '+db.campaign.length+' — '+c.name+' ('+c.phone+')';document.getElementById('currentMessage').textContent=db.campaignMessage.replaceAll('{name}',c.name)}
+function log(c,status){db.history.push({date:new Date().toLocaleString(),phone:c.phone,status,campaign:db.campaignName||'Campaign'});save()}
+function openNext(){let c=db.contacts.find(x=>x.id===db.campaign[db.campaignIndex]);if(!c)return;let m=db.campaignMessage.replaceAll('{name}',c.name);log(c,'opened');window.open('https://wa.me/'+c.phone+'?text='+encodeURIComponent(m),'_blank','noopener');}
+function markDone(){let c=db.contacts.find(x=>x.id===db.campaign[db.campaignIndex]);if(!c)return;log(c,'user_marked_sent');db.campaignIndex++;save();showCurrent()}
+function skipNext(){let c=db.contacts.find(x=>x.id===db.campaign[db.campaignIndex]);if(!c)return;log(c,'skipped');db.campaignIndex++;save();showCurrent()}
+function saveTemplate(){let name=document.getElementById('tplName').value.trim(),message=document.getElementById('tplText').value.trim();if(!name||!message)return alert('નામ અને મેસેજ બંને લખો.');db.templates.push({name,message});save();renderTemplates()}
+function renderTemplates(){document.getElementById('tplList').innerHTML=db.templates.map((t,i)=>`<div class="stat" style="margin:8px 0"><b style="font-size:16px">${esc(t.name)}</b><p>${esc(t.message)}</p><button onclick="useTemplate(${i})">કેમ્પેઇનમાં વાપરો</button> <button class="light" onclick="delTemplate(${i})">કાઢો</button></div>`).join('')}
+function useTemplate(i){document.getElementById('message').value=db.templates[i].message;tab('campaign')}
+function delTemplate(i){db.templates.splice(i,1);save();renderTemplates()}
+function backup(){download('oss-sender-backup-'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(db,null,2),'application/json')}
+document.getElementById('restore').addEventListener('change',async e=>{try{let x=JSON.parse(await e.target.files[0].text());if(!x||!Array.isArray(x.contacts))throw Error();db={...db,...x};if(!Array.isArray(db.lists))db.lists=[];if(!db.lists.length&&db.contacts.length){let id='restored-'+Date.now();db.lists.push({id,name:'Restored contacts',created:new Date().toLocaleString()});db.contacts.forEach(c=>c.listId=id)}activeListId=db.lists[0]?.id||'';save();refreshCampaignLists();renderContacts();renderTemplates();alert('બેકઅપ Restore થયું.')}catch(err){alert('આ બેકઅપ ફાઇલ યોગ્ય નથી.')}e.target.value=''});
+function clearData(){if(confirm('ખરેખર આ બ્રાઉઝરમાંથી બધો OSS Sender ડેટા કાઢી નાખવો છે?')){localStorage.removeItem(KEY);db={contacts:[],templates:[],history:[],campaign:[]};save();renderContacts();renderTemplates()}}
+load();renderStats();refreshCampaignLists();renderContacts();renderTemplates();
 </script></body></html>
