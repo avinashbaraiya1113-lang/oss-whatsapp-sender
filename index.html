@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="gu">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OSS WhatsApp Sender</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{--navy:#10233f;--gold:#f2bd45;--bg:#f4f6fa;--ink:#172338;--muted:#69758a;--green:#128c55}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,"Noto Sans Gujarati",sans-serif;color:var(--ink)}
+header{background:linear-gradient(120deg,#10233f,#1d4168);color:#fff;padding:25px 18px}
+.wrap{max-width:1050px;margin:auto;padding:0 16px}header h1{margin:0;font-size:25px}header p{margin:7px 0 0;color:#d8e3f1}
+main{max-width:1050px;margin:22px auto;padding:0 16px;display:grid;gap:16px;grid-template-columns:1fr 1fr}
+.card{background:#fff;border:1px solid #e2e7ef;border-radius:16px;padding:18px;box-shadow:0 5px 20px #14243a0a}
+h2{font-size:18px;margin:0 0 13px}.hint{font-size:13px;color:var(--muted);line-height:1.55}
+input,textarea,button{font:inherit}input[type=file],input[type=text],textarea{width:100%;padding:12px;border:1px solid #ccd5e1;border-radius:10px;background:#fff}
+textarea{min-height:120px;resize:vertical}.btn{border:0;border-radius:10px;padding:11px 15px;background:var(--navy);color:#fff;font-weight:650;cursor:pointer}.btn.gold{background:var(--gold);color:#19253a}.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}.stat{background:#f2f5f9;padding:12px;border-radius:10px;min-width:100px;flex:1}.stat b{display:block;font-size:23px}.stat small{color:var(--muted)}
+.full{grid-column:1/-1}.bar{height:9px;background:#e9edf3;border-radius:20px;overflow:hidden;margin:10px 0}.bar span{display:block;height:100%;background:var(--green);width:0}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;border-bottom:1px solid #edf0f4;padding:9px 7px}th{color:var(--muted);font-weight:600}
+.scroll{overflow:auto;max-height:300px}.check{display:flex;gap:9px;align-items:flex-start;font-size:13px;line-height:1.5;margin-top:12px}
+.note{background:#fff8e8;border:1px solid #f3d99a;padding:12px;border-radius:10px;font-size:13px;line-height:1.55}
+@media(max-width:720px){main{grid-template-columns:1fr}.full{grid-column:auto}header h1{font-size:21px}}
+</style></head>
+<body>
+<header><div class="wrap"><h1>OSS WhatsApp Sender</h1><p>Excel/CSV સંપર્ક યાદીમાંથી વ્યક્તિગત WhatsApp મેસેજ તૈયાર કરો</p></div></header>
+<main>
+<section class="card">
+<h2>1. Excel / CSV ફાઇલ ઉમેરો</h2>
+<p class="hint">ફાઇલમાં <b>Name</b> અને <b>Phone</b> કૉલમ રાખો. ફોન નંબર country code સાથે હોય તો સારું (ભારત માટે 91).</p>
+<input id="file" type="file" accept=".xlsx,.xls,.csv">
+<div class="row"><button class="btn" id="sample">નમૂના Excel ફાઇલ ડાઉનલોડ</button><button class="btn" id="clear" style="background:#68758a">યાદી સાફ કરો</button></div>
+<p id="filemsg" class="hint">હજુ કોઈ ફાઇલ પસંદ કરી નથી.</p>
+</section>
+<section class="card">
+<h2>2. તમારો મેસેજ લખો</h2>
+<p class="hint">નામ માટે <b>{name}</b> લખો. ઉદાહરણ: નમસ્તે {name}, અમારી નવી ઓફર જુઓ.</p>
+<textarea id="message" placeholder="નમસ્તે {name}, ..."></textarea>
+<div class="row"><button class="btn gold" id="preview">પ્રિવ્યૂ જુઓ</button></div>
+<p id="previewText" class="hint"></p>
+</section>
+<section class="card full">
+<h2>3. સંપર્ક યાદી અને પ્રગતિ</h2>
+<div class="row">
+<div class="stat"><b id="total">0</b><small>કુલ સંપર્કો</small></div>
+<div class="stat"><b id="valid">0</b><small>માન્ય નંબર</small></div>
+<div class="stat"><b id="done">0</b><small>તમે મોકલ્યા તરીકે ચિહ્નિત કર્યા</small></div>
+</div>
+<div class="bar"><span id="progress"></span></div>
+<div class="note">આ ટૂલ દરેક સંપર્ક માટે WhatsAppની અલગ ચેટ ખોલે છે. મેસેજ મોકલવાનું અંતિમ બટન WhatsAppમાં તમારે જ દબાવવાનું છે. માત્ર તમારી પાસે કાયદેસર રીતે પ્રાપ્ત થયેલા અને મેસેજ મેળવવાની સંમતિ આપેલા સંપર્કોનો ઉપયોગ કરો. અજાણ્યા ગ્રુપ સભ્યોના નંબર કાઢવા અથવા અનિચ્છિત બલ્ક મેસેજ મોકલવા માટે આ ટૂલ નથી.</div>
+<div class="check"><input id="consent" type="checkbox"><label for="consent">હું ખાતરી આપું છું કે આ યાદીના સંપર્કોએ મારી પાસેથી WhatsApp મેસેજ મેળવવા સંમતિ આપી છે.</label></div>
+<div class="scroll"><table><thead><tr><th>નામ</th><th>ફોન</th><th>સ્થિતિ</th><th>ક્રિયા</th></tr></thead><tbody id="tbody"><tr><td colspan="4" class="hint">Excel/CSV અપલોડ કરો.</td></tr></tbody></table></div>
+</section>
+<section class="card full">
+<h2>4. વ્યક્તિગત મેસેજ તૈયાર કરો</h2>
+<p class="hint">એક સમયે એક સંપર્કની WhatsApp ચેટ ખોલો. મેસેજ ચેટમાં ભરેલો આવશે; મોકલતા પહેલાં તપાસો અને Send દબાવો.</p>
+<div class="row"><button class="btn gold" id="next" disabled>આગળનો સંપર્ક ખોલો</button><button class="btn" id="mark" disabled>મોકલ્યો તરીકે ચિહ્નિત કરો</button><button class="btn" id="reset" style="background:#68758a" disabled>પ્રગતિ રીસેટ</button></div>
+<p id="current" class="hint">સંપર્ક લોડ થયા પછી અહીં દેખાશે.</p>
+</section>
+</main>
+<script>
+let contacts=[], index=0, sent=new Set(), current=null;
+const $=id=>document.getElementById(id);
+function cleanPhone(v){let s=String(v??'').replace(/\\D/g,'');if(s.length===10)s='91'+s;return s.length>=11&&s.length<=15?s:''}
+function render(){
+ $('total').textContent=contacts.length;
+ $('valid').textContent=contacts.filter(c=>c.phone).length;
+ $('done').textContent=sent.size;
+ $('progress').style.width=(contacts.length?sent.size/contacts.length*100:0)+'%';
+ $('tbody').innerHTML=contacts.map((c,i)=>`<tr><td>${esc(c.name)}</td><td>${esc(c.phone||'غير صحيح')}</td><td>${sent.has(i)?'مڪمل':'બાકી'}</td><td><button class="btn" style="padding:6px 9px;font-size:12px" onclick="openContact(${i})" ${!c.phone?'disabled':''}>ચેટ ખોલો</button></td></tr>`).join('')||'<tr><td colspan="4">Excel/CSV અપલોડ કરો.</td></tr>';
+ $('next').disabled=!contacts.some(c=>c.phone)||!$('consent').checked;
+ $('mark').disabled=!current||!$('consent').checked;
+ $('reset').disabled=!contacts.length;
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+$('file').addEventListener('change',async e=>{
+ const f=e.target.files[0];if(!f)return;
+ try{const buf=await f.arrayBuffer();const wb=XLSX.read(buf,{type:'array'});const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
+ contacts=rows.map(r=>{let keys=Object.keys(r),name=r.Name??r.name??r.NAME??r['નામ']??'',phone=r.Phone??r.phone??r.Mobile??r.mobile??r['Mobile Number']??r['મોબાઇલ નંબર']??'';if(!phone&&keys.length>=2){name=name||r[keys[0]];phone=r[keys[1]]}return{name:String(name||'મિત્ર'),phone:cleanPhone(phone)}}).filter(c=>c.phone||c.name);
+ sent.clear();index=0;current=null;$('filemsg').textContent=`${contacts.length} રેકોર્ડ લોડ થયા.`;render();
+ }catch(err){$('filemsg').textContent='ફાઇલ વાંચી શકાઈ નથી. XLSX અથવા CSV ફાઇલ અજમાવો.'}
+});
+$('sample').onclick=()=>{const ws=XLSX.utils.aoa_to_sheet([['Name','Phone'],['Sample 1','919876543210'],['Sample 2','919876543211']]);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Contacts');XLSX.writeFile(wb,'OSS-WhatsApp-Contacts-Template.xlsx')};
+$('clear').onclick=()=>{contacts=[];sent.clear();current=null;$('file').value='';$('filemsg').textContent='યાદી સાફ કરી.';render()};
+$('preview').onclick=()=>{const c=contacts.find(x=>x.phone)||{name:'મિત્ર'};$('previewText').textContent=$('message').value.replaceAll('{name}',c.name)||'પહેલાં મેસેજ લખો.'};
+$('consent').onchange=render;
+window.openContact=i=>{
+ const c=contacts[i];if(!c||!c.phone)return;
+ if(!$('consent').checked){alert('આગળ વધતા પહેલાં સંમતિની પુષ્ટિ કરો.');return}
+ const msg=$('message').value.replaceAll('{name}',c.name);
+ if(!msg.trim()){alert('પહેલાં મેસેજ લખો.');return}
+ current=i;index=i;$('current').textContent=`હાલનો સંપર્ક: ${c.name} (${c.phone})`;
+ window.open('https://wa.me/'+c.phone+'?text='+encodeURIComponent(msg),'_blank');render();
+};
+$('next').onclick=()=>{let i=contacts.findIndex((c,j)=>j>=index+1&&c.phone&&!sent.has(j));if(i<0)i=contacts.findIndex((c,j)=>c.phone&&!sent.has(j));if(i>=0)openContact(i);else $('current').textContent='બધા માન્ય સંપર્કો તપાસી લીધા છે.'};
+$('mark').onclick=()=>{if(current!==null){sent.add(current);$('current').textContent='મોકલ્યો તરીકે ચિહ્નિત કર્યો. હવે આગળનો સંપર્ક ખોલો.';current=null;render()}};
+$('reset').onclick=()=>{sent.clear();current=null;index=0;render()};
+render();
+</script></body></html>
