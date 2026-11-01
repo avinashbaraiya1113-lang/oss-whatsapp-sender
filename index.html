@@ -32,14 +32,20 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;b
 <p id="filemsg" class="hint">હજુ કોઈ ફાઇલ પસંદ કરી નથી.</p>
 </section>
 <section class="card">
-<h2>2. તમારો મેસેજ લખો</h2>
+<h2>2. WhatsApp કનેક્શન / ગ્રુપ માહિતી</h2>
+<p class="hint">તમારા પોતાના WhatsApp અથવા WhatsApp Webમાં લૉગિન કરવા માટે અધિકૃત WhatsApp ખોલો. આ વેબસાઇટ તમારા WhatsAppના ગ્રુપ અથવા સભ્યોની યાદી વાંચતી નથી.</p>
+<div class="row"><button class="btn" id="connect">WhatsApp Web ખોલો</button><span id="connectStatus" class="hint">કનેક્શન સ્થિતિ: તપાસવાની બાકી</span></div>
+<div class="note" style="margin-top:12px">મહત્વપૂર્ણ: WhatsAppની સામાન્ય અધિકૃત સુવિધા અન્ય લોકોના ગ્રુપના સભ્યોના ફોન નંબર આ ટૂલને આપતી નથી. તેથી ગ્રુપમાંથી છુપાઈને સભ્યોના નંબર મેળવવા અથવા આપમેળે મેસેજ મોકલવાની સુવિધા ઉપલબ્ધ નથી. તમે સંમતિ આપેલા સંપર્કોની યાદી Excel/CSVથી ઉમેરો.</div>
+</section>
+<section class="card">
+<h2>3. તમારો મેસેજ લખો</h2>
 <p class="hint">નામ માટે <b>{name}</b> લખો. ઉદાહરણ: નમસ્તે {name}, અમારી નવી ઓફર જુઓ.</p>
 <textarea id="message" placeholder="નમસ્તે {name}, ..."></textarea>
 <div class="row"><button class="btn gold" id="preview">પ્રિવ્યૂ જુઓ</button></div>
 <p id="previewText" class="hint"></p>
 </section>
 <section class="card full">
-<h2>3. સંપર્ક યાદી અને પ્રગતિ</h2>
+<h2>4. સંપર્ક યાદી અને પ્રગતિ</h2>
 <div class="row">
 <div class="stat"><b id="total">0</b><small>કુલ સંપર્કો</small></div>
 <div class="stat"><b id="valid">0</b><small>માન્ય નંબર</small></div>
@@ -51,7 +57,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;b
 <div class="scroll"><table><thead><tr><th>નામ</th><th>ફોન</th><th>સ્થિતિ</th><th>ક્રિયા</th></tr></thead><tbody id="tbody"><tr><td colspan="4" class="hint">Excel/CSV અપલોડ કરો.</td></tr></tbody></table></div>
 </section>
 <section class="card full">
-<h2>4. વ્યક્તિગત મેસેજ તૈયાર કરો</h2>
+<h2>5. વ્યક્તિગત મેસેજ તૈયાર કરો</h2>
 <p class="hint">એક સમયે એક સંપર્કની WhatsApp ચેટ ખોલો. મેસેજ ચેટમાં ભરેલો આવશે; મોકલતા પહેલાં તપાસો અને Send દબાવો.</p>
 <div class="row"><button class="btn gold" id="next" disabled>આગળનો સંપર્ક ખોલો</button><button class="btn" id="mark" disabled>મોકલ્યો તરીકે ચિહ્નિત કરો</button><button class="btn" id="reset" style="background:#68758a" disabled>પ્રગતિ રીસેટ</button></div>
 <p id="current" class="hint">સંપર્ક લોડ થયા પછી અહીં દેખાશે.</p>
@@ -75,10 +81,12 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
 $('file').addEventListener('change',async e=>{
  const f=e.target.files[0];if(!f)return;
  try{const buf=await f.arrayBuffer();const wb=XLSX.read(buf,{type:'array'});const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
- contacts=rows.map(r=>{let keys=Object.keys(r),name=r.Name??r.name??r.NAME??r['નામ']??'',phone=r.Phone??r.phone??r.Mobile??r.mobile??r['Mobile Number']??r['મોબાઇલ નંબર']??'';if(!phone&&keys.length>=2){name=name||r[keys[0]];phone=r[keys[1]]}return{name:String(name||'મિત્ર'),phone:cleanPhone(phone)}}).filter(c=>c.phone||c.name);
- sent.clear();index=0;current=null;$('filemsg').textContent=`${contacts.length} રેકોર્ડ લોડ થયા.`;render();
+ const imported=rows.map(r=>{let keys=Object.keys(r),name=r.Name??r.name??r.NAME??r['નામ']??'',phone=r.Phone??r.phone??r.Mobile??r.mobile??r['Mobile Number']??r['મોબાઇલ નંબર']??'';if(!phone&&keys.length>=2){name=name||r[keys[0]];phone=r[keys[1]]}return{name:String(name||'મિત્ર'),phone:cleanPhone(phone)}}).filter(c=>c.phone||c.name);
+ const seen=new Set();let duplicates=0;contacts=imported.filter(c=>{if(!c.phone)return true;if(seen.has(c.phone)){duplicates++;return false}seen.add(c.phone);return true});
+ sent.clear();index=0;current=null;$('filemsg').textContent=`${contacts.length} અનન્ય રેકોર્ડ લોડ થયા. ${duplicates} ડુપ્લિકેટ નંબર દૂર કર્યા.`;render();
  }catch(err){$('filemsg').textContent='ફાઇલ વાંચી શકાઈ નથી. XLSX અથવા CSV ફાઇલ અજમાવો.'}
 });
+$('connect').onclick=()=>{window.open('https://web.whatsapp.com/','_blank');$('connectStatus').textContent='WhatsApp Web નવી ટૅબમાં ખોલ્યું. લૉગિન તમે જાતે કરો.'};
 $('sample').onclick=()=>{const ws=XLSX.utils.aoa_to_sheet([['Name','Phone'],['Sample 1','919876543210'],['Sample 2','919876543211']]);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Contacts');XLSX.writeFile(wb,'OSS-WhatsApp-Contacts-Template.xlsx')};
 $('clear').onclick=()=>{contacts=[];sent.clear();current=null;$('file').value='';$('filemsg').textContent='યાદી સાફ કરી.';render()};
 $('preview').onclick=()=>{const c=contacts.find(x=>x.phone)||{name:'મિત્ર'};$('previewText').textContent=$('message').value.replaceAll('{name}',c.name)||'પહેલાં મેસેજ લખો.'};
